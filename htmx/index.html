@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title></title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- <link href="css/style.css" rel="stylesheet"> -->
+	<script src="https://unpkg.com/htmx.org@1.9.5"></script>
+	<script src="https://unpkg.com/htmx.org/dist/ext/client-side-templates.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/nunjucks@3.2.4/browser/nunjucks.min.js"></script>
+</head>
+
+<body>
+	<div hx-ext="client-side-templates">
+		<div hx-get="http://192.168.1.7:9000/api/v1/accounts" hx-trigger="load" hx-swap="innerHTML"
+			nunjucks-template="nunjucks-accounts">
+			Load Accounts
+		</div>
+	</div>
+
+	<div id="movements">
+	</div>
+
+	<template id="nunjucks-accounts">
+		{% for account in accounts %}
+		<li>{{ account.name }}</li>
+		<li>{{ account.balance }}</li>
+		<li>{{ account.created_at }}</li>
+		<li>{{ account.currency }}</li>
+		<li>{{ account.id }}</li>
+		<li>{{ account.network }}</li>
+		<li hx-get="http://192.168.1.7:9000/api/v1/accounts/{{account.id}}/movements" hx-target="#movements"
+			hx-trigger="click" nunjucks-template="nunjucks-movements">
+			{{ account.user_id }}
+		</li>
+		{% endfor %}
+	</template>
+
+	<template id="nunjucks-movements">
+		{% for movement in movements %}
+		<ul>{{ movement.sats }} - {{ movement.type }}</ul>
+		{% endfor %}
+	</template>
+</body>
+
+</html>
